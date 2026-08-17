@@ -1,0 +1,22 @@
+{
+  "_comment": "Canonical record schema. android-app's Room entity and backend's Pydantic/SQLAlchemy models must all match this. If you change a field, update this file first and tell the team.",
+  "record": {
+    "id": "string — always `${device_id}:${local_counter}`, never regenerated centrally",
+    "device_id": "string — unique per installed app instance, generated on first launch",
+    "local_counter": "integer — increments once per record captured on this device",
+    "captured_at": "string — ISO 8601 timestamp, auto-captured, never user-entered",
+    "latitude": "float — auto-captured, never user-entered",
+    "longitude": "float — auto-captured, never user-entered",
+    "survey_data": {
+      "name": "string",
+      "household_size": "integer, optional",
+      "notes": "string, optional"
+    },
+    "record_hash": "string — sha256(record + previous_hash), computed on capture"
+  },
+  "design_rules": [
+    "Records are append-only. No field is ever edited in place once captured — corrections are new records, not updates.",
+    "id is always device_id + local_counter. This is what makes merging two devices' record sets a simple set union with zero conflicts.",
+    "damage_assessment and claim fields are intentionally NOT part of this schema yet — that's a separate pipeline, scoped for later, not this week's build."
+  ]
+}
