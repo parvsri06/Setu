@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setu · Disaster Survey — Mobile UI Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ Setu · Disaster Survey — Mobile UI Design Proposal ============
+   Light theme · soft blue primary · minimal · offline-first
+   ======================================================================== */
+:root {
+  --bg:        #F5F7FA;
+  --surface:   #FFFFFF;
+  --border:    #E3E8F0;
+  --text:      #1B2534;
+  --text-2:    #5B6675;
+  --text-3:    #8A94A6;
+  --blue:      #2563EB;
+  --blue-dark: #1D4ED8;
+  --blue-soft: #EAF1FE;
+  --green:     #16A34A;
+  --green-soft:#E7F6EC;
+  --amber:     #B45309;
+  --amber-soft:#FDF3E3;
+  --red:       #DC2626;
+  --red-soft:  #FDECEC;
+  --radius:    14px;
+  --radius-sm: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #EEF1F6; color: var(--text);
+  -webkit-font-smoothing: antialiased; line-height: 1.45;
+}
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+
+/* ---------- Proposal page layout ---------- */
+.page { max-width: 1160px; margin: 0 auto; padding: 44px 24px 90px; }
+.hero-brand { display: flex; align-items: center; gap: 14px; }
+.hero-brand h1 { font-size: 26px; letter-spacing: -0.02em; }
+.hero-brand .sub { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-2); }
+.hero .tag { color: var(--text-2); font-size: 15px; margin-top: 8px; max-width: 660px; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.legend .item { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 9px 13px; font-size: 12.5px; color: var(--text-2); }
+.legend .item b { color: var(--text); font-weight: 600; }
+
+/* ---------- Status pills (offline-first language) ---------- */
+.pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.pill-amber  { background: var(--amber-soft);  color: var(--amber); } .pill-amber .dot  { background: var(--amber); }
+.pill-blue   { background: var(--blue-soft);   color: var(--blue-dark); } .pill-blue .dot   { background: var(--blue); }
+.pill-green  { background: var(--green-soft);  color: var(--green); } .pill-green .dot  { background: var(--green); }
+.pill-gray   { background: #EEF1F6; color: var(--text-2); } .pill-gray .dot { background: var(--text-3); }
+
+/* ---------- Demo area ---------- */
+.demo { display: flex; gap: 34px; margin-top: 34px; align-items: flex-start; }
+.rail { flex: 0 0 240px; display: flex; flex-direction: column; gap: 4px; }
+.rail .g { margin: 10px 8px 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); }
+.rail button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid transparent; border-radius: 10px; background: transparent; font-size: 13.5px; font-weight: 500; color: var(--text-2); }
+.rail button .n { width: 22px; height: 22px; border-radius: 50%; background: #E7EBF2; color: var(--text-2); font-size: 11.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex: none; }
+.rail button.on { background: #fff; border-color: var(--border); color: var(--text); font-weight: 600; box-shadow: 0 1px 3px rgba(16,24,40,0.06); }
+.rail button.on .n { background: var(--blue); color: #fff; }
+.stage { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
+
+/* ---------- Phone frame ---------- */
+.phone { width: 375px; height: 770px; background: #10131A; border-radius: 46px; padding: 10px; box-shadow: 0 30px 70px rgba(16,24,40,0.28); }
+.screenwrap { position: relative; width: 100%; height: 100%; background: var(--bg); border-radius: 36px; overflow: hidden; }
+.screen { position: absolute; inset: 0; display: none; flex-direction: column; overflow-y: auto; background: var(--bg); -webkit-overflow-scrolling: touch; }
+.screen.on { display: flex; }
+
+/* ---------- In-phone components ---------- */
+.statusbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 4px; font-size: 13px; font-weight: 600; color: var(--text); flex: none; }
+.sb-icons { display: flex; align-items: center; gap: 5px; }
+.content { padding: 8px 20px 124px; flex: 1; }
+.progress { margin: 8px 20px 0; flex: none; }
+.progress .row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-3); margin-bottom: 7px; }
+.track { height: 4px; background: #E5EAF2; border-radius: 3px; overflow: hidden; }
+.fill { height: 100%; background: var(--blue); border-radius: 3px; }
+.h { margin: 16px 2px 14px; }
+.h h2 { font-size: 21px; letter-spacing: -0.01em; }
+.h p { font-size: 13.5px; color: var(--text-2); margin-top: 3px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px 16px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); }
+
+/* ---------- Buttons ---------- */
+.btn { height: 52px; border-radius: 12px; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.btn-primary { background: var(--blue); color: #fff; width: 100%; }
+.btn-primary:active { background: var(--blue-dark); }
+.btn-ghost { background: transparent; color: var(--blue-dark); }
+.btn-half { flex: 1; }
+
+/* ---------- Form fields ---------- */
+.field { margin-bottom: 15px; }
+.field label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.req { color: var(--red); }
+.opt { display: inline-block; color: var(--text-3); font-weight: 500; font-size: 11.5px; background: #EDF1F7; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+.field input, .field select, .field textarea {
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface);
+  padding: 0 14px; font-size: 16px; color: var(--text); outline: none;
+  -webkit-appearance: none; appearance: none;
+}
+.field input, .field select { height: 50px; }
+.field textarea { min-height: 96px; padding: 13px 14px; resize: none; }
+.field select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238A94A6' stroke-width='2.2' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+.field input.err-field { border-color: var(--red); }
+.field input.err-field:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.12); }
+.err { color: var(--red); font-size: 12.5px; margin-top: 5px; }
+.hint { color: var(--text-3); font-size: 12.5px; margin-top: 5px; }
+/* ---------- Chips & segmented control ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 10px 16px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface); font-size: 14px; font-weight: 500; color: var(--text-2); -webkit-tap-highlight-color: transparent; }
+.chip.on { background: var(--blue-soft); border-color: var(--blue); color: var(--blue-dark); font-weight: 600; }
+.seg { display: flex; background: #EDF1F7; border-radius: 12px; padding: 4px; gap: 4px; }
+.seg button { flex: 1; height: 44px; border: none; background: transparent; border-radius: 9px; font-size: 14.5px; font-weight: 600; color: var(--text-2); -webkit-tap-highlight-color: transparent; }
+.seg button.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(16,24,40,0.14); }
+.seg button.on.red { background: var(--red-soft); color: var(--red); }
+
+/* ---------- Info note ---------- */
+.info { display: flex; gap: 9px; align-items: flex-start; background: var(--blue-soft); border-radius: 10px; padding: 10px 12px; font-size: 12.5px; color: var(--blue-dark); line-height: 1.45; margin-bottom: 16px; }
+.info svg { flex: none; margin-top: 1px; }
+
+/* ---------- Footer actions ---------- */
+.foot { position: sticky; bottom: 0; left: 0; right: 0; padding: 12px 20px 20px; background: var(--bg); border-top: 1px solid var(--border); display: flex; gap: 10px; z-index: 5; box-shadow: 0 -4px 12px rgba(16,24,40,0.06); }
+.foot-note { font-size: 12px; color: var(--text-3); text-align: center; margin-bottom: 8px; }
+.foot .btn-half { height: 50px; }
+.toast { position: absolute; left: 50%; bottom: 112px; transform: translateX(-50%); background: #1B2534; color: #fff; font-size: 13px; font-weight: 600; padding: 11px 18px; border-radius: 999px; box-shadow: 0 8px 24px rgba(16,24,40,0.32); opacity: 0; pointer-events: none; transition: opacity 0.18s ease; z-index: 20; white-space: nowrap; }
+.toast.show { opacity: 1; }
+
+/* ---------- Welcome ---------- */
+.welcome { padding: 40px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand h1 { font-size: 30px; letter-spacing: -0.03em; }
+.brand .subtitle { font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); }
+.tagline { font-size: 16px; color: var(--text-2); margin-top: 26px; line-height: 1.55; }
+.welcome .btn-primary { margin-top: 26px; }
+.welcome .pill { margin-top: 14px; align-self: flex-start; }
+.welcome-note { margin-top: auto; padding-top: 26px; font-size: 12.5px; color: var(--text-3); text-align: center; line-height: 1.55; }
+
+/* ---------- Photos ---------- */
+.add-photo { width: 100%; height: 60px; border: 1.5px dashed #B9C4D6; background: var(--surface); border-radius: 12px; font-size: 14.5px; font-weight: 600; color: var(--blue-dark); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+.photos { display: flex; gap: 8px; margin-top: 10px; }
+.thumb { width: 64px; height: 64px; border-radius: 10px; background: #E7ECF4; display: flex; align-items: center; justify-content: center; color: #8A94A6; border: 1px solid var(--border); }
+.photo-count { font-size: 12.5px; color: var(--text-3); margin-top: 8px; }
+
+/* ---------- Persons ---------- */
+.person { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-top: 12px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); }
+.phead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.phead h4 { font-size: 14px; }
+.phead .remove { background: none; border: none; color: var(--text-3); font-size: 12.5px; font-weight: 500; padding: 4px; }
+.add-person { border: 1.5px dashed #B9C4D6; background: transparent; width: 100%; height: 50px; border-radius: 12px; font-size: 14.5px; font-weight: 600; color: var(--blue-dark); margin-top: 12px; }
+
+/* ---------- Review ---------- */
+.review-card { margin-bottom: 12px; }
+.sect-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.sect-head h3 { font-size: 15px; }
+.edit { background: none; border: none; color: var(--blue); font-size: 13px; font-weight: 600; padding: 4px; }
+.rv-row { display: flex; justify-content: space-between; gap: 14px; padding: 4px 0; font-size: 13.5px; }
+.rv-row .k { color: var(--text-2); flex: none; }
+.rv-row .v { font-weight: 600; text-align: right; }
+.rv-row .v.muted { color: var(--text-3); font-weight: 400; }
+
+/* ---------- Saved / success ---------- */
+.success-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--green-soft); display: flex; align-items: center; justify-content: center; margin: 26px auto 0; }
+.saved-title { text-align: center; font-size: 21px; margin-top: 14px; }
+.saved-sub { text-align: center; color: var(--text-2); font-size: 13.5px; margin-top: 4px; }
+.id-line { text-align: center; font-size: 12.5px; color: var(--text-3); font-weight: 600; letter-spacing: 0.04em; margin-top: 18px; }
+.id-value { text-align: center; font-size: 22px; font-weight: 700; letter-spacing: 0.03em; margin-top: 2px; }
+.status-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13.5px; color: var(--text-2); }
+.status-row .v { font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.divider { height: 1px; background: var(--border); margin: 8px 0; }
+.center-msg { font-size: 13px; color: var(--text-2); text-align: center; margin-top: 14px; line-height: 1.55; }
+
+/* ---------- Caption / navigation under phone ---------- */
+.caption { margin-top: 18px; max-width: 375px; text-align: center; }
+.caption h3 { font-size: 15px; }
+.caption p { font-size: 13px; color: var(--text-2); margin-top: 4px; line-height: 1.5; }
+.nav { display: flex; gap: 10px; margin-top: 14px; justify-content: center; }
+.nav button { padding: 10px 20px; border-radius: 10px; border: 1px solid var(--border); background: #fff; font-size: 13.5px; font-weight: 600; color: var(--text); }
+.nav button:disabled { opacity: 0.45; cursor: default; }
+.nav button.next { background: var(--blue); color: #fff; border-color: var(--blue); }
+.counter { font-size: 12px; font-weight: 600; color: var(--text-3); text-align: center; margin-top: 10px; letter-spacing: 0.03em; }
+.notes { margin-top: 70px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.note-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); }
+.note-card h3 { font-size: 15.5px; margin-bottom: 12px; }
+.note-card ul { padding-left: 18px; }
+.note-card li { font-size: 13.5px; color: var(--text-2); margin: 6px 0; line-height: 1.55; }
+.note-card li b { color: var(--text); }
+.swatches { display: flex; flex-wrap: wrap; gap: 14px; }
+.sw { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-2); }
+.sw .c { width: 26px; height: 26px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.06); flex: none; }
+.type-row { font-size: 13.5px; color: var(--text-2); margin-top: 14px; }
+.type-row b { color: var(--text); }
+@media (max-width: 940px) {
+  .demo { flex-direction: column; align-items: center; }
+  .rail { flex-direction: row; flex-wrap: wrap; justify-content: center; flex: none; max-width: 560px; }
+  .rail .g { display: none; }
+  .rail button { width: auto; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="hero-brand">
+      <svg viewBox="0 0 48 48" width="42" height="42" aria-hidden="true">
+        <rect width="48" height="48" rx="14" fill="#FFFFFF" stroke="#E3E8F0"/>
+        <path d="M10 30 C10 14 38 14 38 30" stroke="#E8862A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <line x1="8" y1="30" x2="40" y2="30" stroke="#1B2534" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M12 30 C12 40 36 40 36 30" stroke="#16A34A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>Setu</h1>
+        <div class="sub">Disaster Survey — Mobile UI Proposal</div>
+      </div>
+    </div>
+    <p class="tag">An offline-first Android app for collecting flood-damage and casualty surveys where there is no internet. Field data is saved locally, moved between nearby phones, and uploaded when a connection appears. Interactive prototype — survey fields follow the attached "Setu Disaster Survey" PDF.</p>
+
+  </header>
+
+  <!-- ============ DEMO ============ -->
+  <div class="demo">
+
+    <!-- Screen rail -->
+    <nav class="rail" aria-label="Screens">
+      <div class="g">Survey flow</div>
+      <button data-go="0"><span class="n">1</span>Welcome</button>
+      <button data-go="1"><span class="n">2</span>Personal Details</button>
+      <button data-go="2"><span class="n">3</span>Location</button>
+      <button data-go="3"><span class="n">4</span>Disaster &amp; Damage</button>
+      <button data-go="4"><span class="n">5</span>Casualties</button>
+      <button data-go="5"><span class="n">6</span>Relief Camp</button>
+      <button data-go="6"><span class="n">7</span>Review</button>
+      <button data-go="7"><span class="n">8</span>Saved ✓</button>
+    </nav>
+
+    <div class="stage">
+      <div class="phone">
+        <div class="screenwrap">
+
+
+          <style>
+/* --- Additions for the interactive prototype --- */
+.field select.err-field, .field textarea.err-field { border-color: var(--red); }
+.field select.err-field:focus, .field textarea.err-field:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.12); }
+.thumb { position: relative; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: block; }
+.thumb .rm { position: absolute; top: -7px; right: -7px; width: 22px; height: 22px; border-radius: 50%; border: none; background: #1B2534; color: #fff; font-size: 11px; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+#photo-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+#photo-grid .thumb { margin: 0; }
+.sample-link { display: inline-block; margin-top: 10px; font-size: 12.5px; color: var(--text-3); text-decoration: underline; background: none; border: none; padding: 0; }
+.review-card.incomplete { border-color: #F3B4B4; }
+.incomplete-tag { display: inline-block; background: var(--red-soft); color: var(--red); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-left: 8px; vertical-align: middle; }
+.ok-tag { display: inline-block; color: var(--green); font-size: 12px; font-weight: 700; margin-left: 8px; vertical-align: middle; }
+.missing-list { margin: 6px 0 0 18px; color: var(--red); font-size: 12.5px; line-height: 1.5; }
+.btn-primary:disabled { background: #A9BFEA; cursor: not-allowed; }
+.save-banner { display: flex; gap: 10px; align-items: flex-start; background: var(--red-soft); border: 1px solid #F3B4B4; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+.save-banner b { color: var(--red); font-size: 13.5px; display: block; }
+.save-banner ul { margin: 6px 0 0 18px; color: var(--red); font-size: 12.5px; }
+.saved-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.saved-item:last-child { border-bottom: none; }
+.saved-item b { display: block; font-size: 14px; }
+.saved-item .meta { font-size: 12px; color: var(--text-3); }
+.saved-item .pill { font-size: 11px; }
+.phead .remove { font-size: 12px; color: var(--red); }
+.add-photo:active, .add-person:active { background: var(--blue-soft); }
+
+</style>
+
+          <div class="toast" id="toast" role="status"></div>
+
+          <!-- 1 · WELCOME -->
+          <div class="screen on" id="s0">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="sb-icons">
+                <svg width="16" height="11" viewBox="0 0 16 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="#1B2534"/><rect x="4.5" y="4.5" width="3" height="6.5" rx="1" fill="#1B2534"/><rect x="9" y="2" width="3" height="9" rx="1" fill="#1B2534"/><rect x="13.5" y="0" width="2.5" height="11" rx="1" fill="#1B2534" opacity=".35"/></svg>
+                <svg width="15" height="11" viewBox="0 0 15 11"><path d="M2.2 4.5 a7.5 7.5 0 0 1 10.6 0" stroke="#1B2534" stroke-width="1.4" fill="none" stroke-linecap="round"/><circle cx="7.5" cy="9" r="1.4" fill="#1B2534"/></svg>
+                <svg width="24" height="12" viewBox="0 0 24 12"><rect x="0.5" y="0.5" width="19" height="11" rx="3" stroke="#1B2534" opacity=".35" fill="none"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="#1B2534"/><path d="M21.5 4v4a2.5 2.5 0 0 0 0-4" fill="#1B2534" opacity=".35"/></svg>
+              </span>
+            </div>
+            <div class="content welcome">
+              <div class="brand">
+                <svg viewBox="0 0 48 48" width="46" height="46" aria-hidden="true">
+                  <rect width="48" height="48" rx="14" fill="#FFFFFF" stroke="#E3E8F0"/>
+                  <path d="M10 30 C10 14 38 14 38 30" stroke="#E8862A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                  <line x1="8" y1="30" x2="40" y2="30" stroke="#1B2534" stroke-width="3.5" stroke-linecap="round"/>
+                  <path d="M12 30 C12 40 36 40 36 30" stroke="#16A34A" stroke-width="3" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div>
+                  <h1>Setu</h1>
+                  <p class="subtitle">Disaster Survey</p>
+                </div>
+              </div>
+              <p class="tagline">Report flood-affected people and damage, even without internet.</p>
+              <button class="btn btn-primary" data-go="1">Start Survey</button>
+              <div class="pill pill-green"><span class="dot"></span><span>Offline-ready</span></div>
+              <p class="welcome-note">Your answers are saved on this device and can be transferred through nearby Setu devices when connectivity becomes available.</p>
+            </div>
+          </div>
+
+          <!-- 2 · PERSONAL DETAILS -->
+          <div class="screen" id="s1">
+            <div class="progress">
+              <div class="row"><span>Step 1 of 6</span><span>Personal Details</span></div>
+              <div class="track"><div class="fill" style="width:16%"></div></div>
+            </div>
+            <div class="content">
+              <div class="h"><h2>Personal Details</h2><p>Basic information of the affected person / family.</p></div>
+              <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="p-name" placeholder="Enter full name"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>Father's Name <span class="req">*</span></label><input type="text" id="p-father" placeholder="Enter father's name"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>Mobile Number <span class="req">*</span></label><input type="tel" id="p-mobile" inputmode="numeric" maxlength="10" placeholder="Enter 10-digit mobile number"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>Aadhaar Number <span class="req">*</span></label><input type="tel" id="p-aadhaar" inputmode="numeric" maxlength="12" placeholder="Enter 12-digit Aadhaar number"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>Family ID <span class="opt">Optional</span></label><input type="text" id="p-family" placeholder="Enter family ID (optional)"><p class="err" style="display:none"></p></div>
+            </div>
+            <div class="foot">
+              <button class="btn btn-ghost btn-half draft-btn">Save Draft</button>
+              <button class="btn btn-primary btn-half" data-go="2">Next</button>
+            </div>
+          </div>
+
+          <!-- 3 · LOCATION -->
+          <div class="screen" id="s2">
+            <div class="progress">
+              <div class="row"><span>Step 2 of 6</span><span>Location Details</span></div>
+              <div class="track"><div class="fill" style="width:33%"></div></div>
+            </div>
+            <div class="content">
+              <div class="h"><h2>Location Details</h2><p>Where is the affected area?</p></div>
+              <div class="info">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+                <span>Manual location fields only — no GPS needed. Enter the area names as known locally.</span>
+              </div>
+              <div class="field"><label>Village / Town <span class="req">*</span></label><input type="text" id="l-village" placeholder="Enter village/town"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>District <span class="req">*</span></label>
+                <select id="l-district">
+                  <option value="" disabled selected>Select district</option>
+                  <optgroup label="Assam">
+                    <option>Baksa</option><option>Barpeta</option><option>Biswanath</option><option>Bongaigaon</option>
+                    <option>Cachar</option><option>Charaideo</option><option>Chirang</option><option>Darrang</option>
+                    <option>Dhemaji</option><option>Dhubri</option><option>Dibrugarh</option><option>Dima Hasao</option>
+                    <option>Goalpara</option><option>Golaghat</option><option>Hailakandi</option><option>Hojai</option>
+                    <option>Jorhat</option><option>Kamrup</option><option>Kamrup Metropolitan</option><option>Karbi Anglong</option>
+                    <option>Karimganj</option><option>Kokrajhar</option><option>Lakhimpur</option><option>Majuli</option>
+                    <option>Morigaon</option><option>Nagaon</option><option>Nalbari</option><option>Sivasagar</option>
+                    <option>Sonitpur</option><option>South Salmara-Mankachar</option><option>Tinsukia</option><option>Udalguri</option>
+                  </optgroup>
+                  <optgroup label="Other major districts">
+                    <option>Delhi</option><option>Mumbai</option><option>Kolkata</option><option>Chennai</option>
+                    <option>Bengaluru</option><option>Hyderabad</option><option>Patna</option><option>Lucknow</option>
+                    <option>Jaipur</option><option>Bhopal</option><option>Ranchi</option><option>Bhubaneswar</option>
+                  </optgroup>
+                </select>
+                <p class="err" style="display:none"></p>
+              </div>
+              <div class="field"><label>Nearest Post Office <span class="req">*</span></label><input type="text" id="l-postoffice" placeholder="Enter post office"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>Nearest Police Station <span class="req">*</span></label><input type="text" id="l-police" placeholder="Enter police station"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>PIN Code <span class="req">*</span></label><input type="tel" id="l-pin" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit PIN code"><p class="err" style="display:none"></p></div>
+            </div>
+            <div class="foot">
+              <button class="btn btn-ghost btn-half draft-btn">Save Draft</button>
+              <button class="btn btn-primary btn-half" data-go="3">Next</button>
+            </div>
+          </div>
+
+          <!-- 4 · FLOOD DAMAGE -->
+          <div class="screen" id="s3">
+            <div class="progress">
+              <div class="row"><span>Step 3 of 6</span><span>Disaster &amp; Damage Details</span></div>
+              <div class="track"><div class="fill" style="width:50%"></div></div>
+            </div>
+            <div class="content">
+              <div class="h"><h2>Disaster &amp; Damage Details</h2><p>What was damaged?</p></div>
+              <div class="field">
+                <label>Type of Disaster <span class="req">*</span></label>
+                <select id="d-type"><option value="" disabled selected>Select disaster type</option><option value="Flood">Flood</option><option value="Cyclone">Cyclone</option><option value="Earthquake">Earthquake</option><option value="Landslide">Landslide</option><option value="Fire">Fire</option><option value="Storm">Storm</option><option value="Other">Other</option></select>
+                <p class="err" style="display:none"></p>
+              </div>
+              <div class="field" id="d-other-type-wrap" hidden><label>Specify Other Disaster Type <span class="req">*</span></label><input type="text" id="d-other-type" placeholder="Enter disaster type"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>Date of Damage <span class="req">*</span></label><input type="date" id="d-date"><p class="err" style="display:none"></p></div>
+              <div class="field">
+                <label>Damage Area <span class="req">*</span></label>
+                <div class="chips" id="d-areas">
+                  <button class="chip" data-v="House">House</button>
+                  <button class="chip" data-v="Shop">Shop</button>
+                  <button class="chip" data-v="Agricultural Land">Agricultural Land</button>
+                  <button class="chip" data-v="Road">Road</button>
+                  <button class="chip" data-v="Vehicle">Vehicle</button>
+                  <button class="chip" data-v="Other">Other</button>
+                </div>
+                <p class="err" style="display:none"></p>
+              </div>
+              <div class="field" id="d-other-area-wrap" hidden><label>Specify Other Damaged Area <span class="req">*</span></label><input type="text" id="d-other-area" placeholder="Enter damaged area"><p class="err" style="display:none"></p></div>
+              <div class="field"><label>Damage Description</label><textarea id="d-desc" placeholder="Describe the damage"></textarea></div>
+              <div class="field">
+                <label>Damage Proof / Photos <span class="opt">Optional</span></label>
+                <button class="add-photo" id="add-photo-btn" type="button">+ Add Damage Photos</button>
+                <input type="file" id="d-photos" accept="image/*" multiple style="display:none">
+                <div class="photos" id="photo-grid"></div>
+                <p class="photo-count" id="photo-count"></p>
+                <button class="sample-link" id="sample-photos" type="button">Can't pick photos in this demo? Add sample photos</button>
+              </div>
+            </div>
+            <div class="foot">
+              <button class="btn btn-ghost btn-half draft-btn">Save Draft</button>
+              <button class="btn btn-primary btn-half" data-go="4">Next</button>
+            </div>
+          </div>
+
+          <!-- 5 · CASUALTIES -->
+          <div class="screen" id="s4">
+            <div class="progress">
+              <div class="row"><span>Step 4 of 6</span><span>Casualty Details</span></div>
+              <div class="track"><div class="fill" style="width:66%"></div></div>
+            </div>
+            <div class="content">
+              <div class="h"><h2>Casualty Details</h2><p>Add one or more affected persons. Choose one status per person.</p></div>
+              <div id="casualties"></div>
+              <button class="add-person" id="add-person">+ Add Another Person</button>
+            </div>
+            <div class="foot">
+              <button class="btn btn-ghost btn-half draft-btn">Save Draft</button>
+              <button class="btn btn-primary btn-half" data-go="5">Next</button>
+            </div>
+          </div>
+
+          <!-- 6 · RELIEF CAMP -->
+          <div class="screen" id="s5">
+            <div class="progress">
+              <div class="row"><span>Step 5 of 6</span><span>Relief Camp Details</span></div>
+              <div class="track"><div class="fill" style="width:83%"></div></div>
+            </div>
+            <div class="content">
+              <div class="h"><h2>Relief Camp Details</h2><p>Helps rescue teams know where people are staying.</p></div>
+              <div class="field">
+                <label>Is the family staying in a relief camp? <span class="req">*</span></label>
+                <div class="seg" id="camp-seg"><button data-v="yes">Yes</button><button data-v="no">No</button></div>
+                <p class="err" style="display:none"></p>
+              </div>
+              <div class="card" id="camp-card" hidden>
+                <div class="field"><label>Relief Camp Name <span class="req">*</span></label><input type="text" id="c-name" placeholder="Enter camp name"><p class="err" style="display:none"></p></div>
+                <div class="field"><label>Camp Location / Place <span class="req">*</span></label><input type="text" id="c-location" placeholder="Enter camp location"><p class="err" style="display:none"></p></div>
+                <div class="field"><label>Camp Address <span class="opt">Optional</span></label><input type="text" id="c-address" placeholder="Enter camp address"></div>
+                <div class="field"><label>Nearest Landmark <span class="opt">Optional</span></label><input type="text" id="c-landmark" placeholder="Enter nearby landmark"></div>
+              </div>
+            </div>
+            <div class="foot">
+              <button class="btn btn-ghost btn-half draft-btn">Save Draft</button>
+              <button class="btn btn-primary btn-half" data-go="6">Next</button>
+            </div>
+          </div>
+
+          <!-- 7 · REVIEW -->
+          <div class="screen" id="s6">
+            <div class="progress">
+              <div class="row"><span>Step 6 of 6</span><span>Review</span></div>
+              <div class="track"><div class="fill" style="width:100%"></div></div>
+            </div>
+            <div class="content">
+              <div class="h"><h2>Review</h2><p>Check everything before you save.</p></div>
+              <div class="save-banner" id="save-banner" hidden>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5M12 15.8h.01"/></svg>
+                <div><b>Some details need attention</b><ul id="save-errors"></ul></div>
+              </div>
+              <div id="review-cards"></div>
+            </div>
+            <div class="foot" style="flex-direction:column">
+              <div class="foot-note">Saves on this device — no internet needed.</div>
+              <button class="btn btn-primary" id="save-btn">Save Survey</button>
+            </div>
+          </div>
+
+          <!-- 8 · SURVEY SAVED SUCCESSFULLY -->
+          <div class="screen" id="s7">
+            <div class="content" style="padding-top:8px">
+              <div class="success-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>
+              </div>
+              <h2 class="saved-title">Survey Saved Successfully</h2>
+              <p class="saved-sub">Thank you — this information will help rescue teams.</p>
+              <div class="card" style="margin-top:22px">
+                <div class="id-line">SURVEY ID</div>
+                <div class="id-value" id="survey-id">SC-2026-000123</div>
+              </div>
+            </div>
+            <div class="foot" style="flex-direction:column;gap:10px">
+              <button class="btn btn-ghost" id="view-saved">View Saved Surveys</button>
+              <button class="btn btn-primary" id="new-survey">Create New Survey</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="caption">
+        <h3>Welcome</h3>
+        <p>One clear action: Start Survey. The green "Offline-ready" pill sets expectations up front — no internet needed.</p>
+      </div>
+      <div class="nav">
+        <button class="prev">← Back</button>
+        <button class="next">Next →</button>
+      </div>
+      <div class="counter">Screen 1 of 8</div>
+    </div>
+  </div>
+
+  <script>
+// ================= ENGLISH TEXT =================
+  const TXT = {w_sub:'Disaster Survey',w_tagline:'Report flood-affected people and damage, even without internet.',w_start:'Start Survey',w_offline:'Offline-ready',w_note:'Your answers are saved on this device.',step1:'Step 1 of 6',step2:'Step 2 of 6',step3:'Step 3 of 6',step4:'Step 4 of 6',step5:'Step 5 of 6',step6:'Step 6 of 6',s_personal_t:'Personal Details',s_personal_d:'Basic information of the affected person / family.',s_location_t:'Location Details',s_location_d:'Where is the affected area?',s_damage_t:'Disaster & Damage Details',s_damage_d:'What was damaged?',s_casualty_t:'Casualty Details',s_casualty_d:'Add one or more affected persons.',s_camp_t:'Relief Camp Details',s_camp_d:'Helps rescue teams know where people are staying.',s_review_t:'Review',s_review_d:'Check everything before you save.',s_saved_t:'Survey Saved Successfully',s_saved_d:'Thank you — this information will help rescue teams.',f_name:'Full Name',f_name_ph:'Enter full name',f_father:"Father's Name",f_father_ph:"Enter father's name",f_mobile:'Mobile Number',f_mobile_ph:'Enter 10-digit mobile number',f_aadhaar:'Aadhaar Number',f_aadhaar_ph:'Enter 12-digit Aadhaar number',f_family:'Family ID',f_family_ph:'Enter Family ID (optional)',f_village:'Village / Town',f_village_ph:'Enter village/town',f_district:'District',f_district_ph:'Select district',f_po:'Post Office',f_po_ph:'Enter post office',f_ps:'Nearest Police Station',f_ps_ph:'Enter police station',f_pin:'PIN Code',f_pin_ph:'Enter 6-digit PIN code',loc_note:'Manual location fields only.',f_dtype:'Type of Disaster',f_dtype_ph:'Select disaster type',f_dother:'Specify Other Disaster Type',f_dother_ph:'Enter disaster type',f_ddate:'Date of Damage',f_darea:'Damage Area',f_ddesc:'Damage Description',f_ddesc_ph:'Describe the damage',f_dphoto:'Damage Proof / Photos',btn_addphoto:'+ Add Damage Photos',photo_none:'No photos added',photo_one:'1 photo added',photo_many:'{n} photos added',photo_opt:'optional',sample_link:"Can't pick photos? Add sample photos",c_name:'Name',c_name_ph:"Enter person's name",c_age:'Age',c_age_ph:'Enter age',c_gender:'Gender',c_status:'Status',c_loc:'Residential / Current Location',c_loc_ph:'Enter current location',c_add:'+ Add Another Person',c_remove:'Remove Person',g_male:'Male',g_female:'Female',g_other:'Other',st_alive:'Alive',st_missing:'Missing',st_notalive:'Not Alive',camp_q:'Is the family staying in a relief camp?',camp_name:'Relief Camp Name',camp_name_ph:'Enter camp name',camp_loc:'Camp Location',camp_loc_ph:'Enter camp location',camp_addr:'Camp Address',camp_addr_ph:'Enter camp address',camp_land:'Landmark',camp_land_ph:'Enter nearby landmark',yes:'Yes',no:'No',r_personal:'Personal Details',r_location:'Location',r_damage:'Disaster / Damage',r_casualty:'Casualties',r_camp:'Relief Camp',r_name:'Name',r_father:"Father's Name",r_mobile:'Mobile',r_aadhaar:'Aadhaar',r_family:'Family ID',r_village:'Village / Town',r_district:'District',r_po:'Post Office',r_ps:'Police Station',r_pin:'PIN Code',r_disaster:'Disaster',r_date:'Date of Damage',r_area:'Damage Area',r_desc:'Description',r_photos:'Photos',r_people:'People',r_person:'Person',r_campname:'Camp Name',r_camploc:'Camp Location',r_addr:'Address',r_land:'Landmark',r_incomplete:'Incomplete',r_edit:'Edit',banner_title:'Some details need attention',saved_id:'SURVEY ID',saved_view:'View Saved Surveys',saved_new:'Create New Survey',opt:'Optional',err_required:'This field is required.',err_name:'Enter a valid name.',err_mobile:'Enter a valid 10-digit mobile number.',err_aadhaar:'Aadhaar must be exactly 12 digits.',err_pin:'Enter a valid 6-digit PIN code.',err_future:'Date cannot be in the future.',err_age:'Enter a valid age (0-120).',err_cas:'Every person needs name, age, gender, status and location.',err_camp:'Camp name and location are required.',toast_draft:'Draft saved',draft_note:'Saves locally.',save_survey:'Save Survey',a_house:'House',a_shop:'Shop',a_agri:'Agricultural Land',a_road:'Road',a_vehicle:'Vehicle',a_other:'Other',opt_flood:'Flood',opt_cyclone:'Cyclone',opt_landslide:'Landslide',opt_earthquake:'Earthquake',opt_fire:'Fire',opt_storm:'Storm',opt_other:'Other',btn_draft:'Save Draft',next:'Next',saved:'Saved'};
+  const T = (k) => TXT[k] || k;
+  const TR = (v) => {
+    const m = {Flood:'opt_flood',Cyclone:'opt_cyclone',Landslide:'opt_landslide',Earthquake:'opt_earthquake',Fire:'opt_fire',Storm:'opt_storm',Other:'opt_other',House:'a_house',Shop:'a_shop','Agricultural Land':'a_agri',Road:'a_road',Vehicle:'a_vehicle',Male:'g_male',Female:'g_female',Alive:'st_alive',Missing:'st_missing','Not Alive':'st_notalive',Yes:'yes',No:'no'};
+    return m[v] ? T(m[v]) : v;
+  };
+  // ================= STATE =================
+  // ================= STATE =================
+  const state = {
+    personal: { name:'', father:'', mobile:'', aadhaar:'', familyId:'' },
+    location: { village:'', district:'', postOffice:'', policeStation:'', pin:'' },
+    damage:   { disasterType:'', otherType:'', date:'', areas:[], otherArea:'', description:'', photos:[] },
+    casualties: [ { id:1, name:'', age:'', gender:'', status:'', location:'' } ],
+    camp:     { inCamp:null, name:'', location:'', address:'', landmark:'' }
+  };
+  let savedSurvey = null;
+  let casSeq = 1;
+  const NAME_RX = /^[A-Za-z][A-Za-z .'-]*$/;
+  const RULES = {
+    'p-name':       { required: true, pattern: NAME_RX, msgKey: 'err_name' },
+    'p-father':     { required: true, pattern: NAME_RX, msgKey: 'err_name' },
+    'p-mobile':     { required: true, pattern: /^[6-9]\d{9}$/, msgKey: 'err_mobile' },
+    'p-aadhaar':    { required: true, pattern: /^\d{12}$/, msgKey: 'err_aadhaar' },
+    'l-village':    { required: true, msgKey: 'err_required' },
+    'l-district':   { required: true, msgKey: 'err_required' },
+    'l-postoffice': { required: true, msgKey: 'err_required' },
+    'l-police':     { required: true, msgKey: 'err_required' },
+    'l-pin':        { required: true, pattern: /^\d{6}$/, msgKey: 'err_pin' },
+    'd-type':       { required: true, msgKey: 'err_required' },
+    'd-other-type': { required: true, msgKey: 'err_required' },
+    'd-date':       { required: true, custom: (v) => !v || new Date(v) <= new Date(), msgKey: 'err_future' },
+    'd-other-area': { required: true, msgKey: 'err_required' }
+  };
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmtDate = (iso) => { const p = String(iso).split('-'); return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : '—'; };
+
+  // ================= NAVIGATION =================
+  const screens = document.querySelectorAll('.screen');
+  const railBtns = document.querySelectorAll('.rail button');
+  const capTitle = document.querySelector('.caption h3');
+  const capBody = document.querySelector('.caption p');
+  const counter = document.querySelector('.counter');
+    const CAPTIONS = [
+    { t: 'Welcome', b: 'Start Survey.' },
+    { t: 'Personal Details', b: 'Required fields marked *.' },
+    { t: 'Location', b: 'Manual location entry.' },
+    { t: 'Disaster & Damage', b: 'Type, date, areas, description, optional photos.' },
+    { t: 'Casualties', b: 'Alive / Missing / Not Alive.' },
+    { t: 'Relief Camp', b: 'Yes or No.' },
+    { t: 'Review', b: 'Check and save.' },
+    { t: 'Survey Saved', b: 'Survey ID shown.' }
+  ];
+  let cur = 0;
+  function go(n) {
+    cur = Math.max(0, Math.min(screens.length - 1, n));
+    screens.forEach((s, i) => s.classList.toggle('on', i === cur));
+    railBtns.forEach((b, i) => b.classList.toggle('on', i === cur));
+    capTitle.textContent = CAPTIONS[cur].t;
+    capBody.textContent = CAPTIONS[cur].b;
+    counter.textContent = 'Screen ' + (cur + 1) + ' of ' + screens.length;
+    document.querySelector('.prev').disabled = cur === 0;
+    document.querySelector('.next').disabled = cur === screens.length - 1;
+    if (cur === 6) renderReview();
+    document.querySelector('.stage').scrollTop = 0;
+  }
+
+  // ================= FIELD BINDING + VALIDATION =================
+  const FIELD_KEYS = {
+    'p-name':'name','p-father':'father','p-mobile':'mobile','p-aadhaar':'aadhaar','p-family':'familyId',
+    'l-village':'village','l-district':'district','l-postoffice':'postOffice','l-police':'policeStation','l-pin':'pin',
+    'd-type':'disasterType','d-other-type':'otherType','d-date':'date','d-desc':'description','d-other-area':'otherArea',
+    'c-name':'name','c-location':'location','c-address':'address','c-landmark':'landmark'
+  };
+  const FIELD_OBJ = {
+    'p-name':'personal','p-father':'personal','p-mobile':'personal','p-aadhaar':'personal','p-family':'personal',
+    'l-village':'location','l-district':'location','l-postoffice':'location','l-police':'location','l-pin':'location',
+    'd-type':'damage','d-other-type':'damage','d-date':'damage','d-desc':'damage','d-other-area':'damage',
+    'c-name':'camp','c-location':'camp','c-address':'camp','c-landmark':'camp'
+  };
+  function checkField(el, rule, force) {
+    const wrap = el.closest('.field');
+    if (wrap && wrap.hidden) { el.classList.remove('err-field'); return true; }
+    const v = (el.value || '').trim();
+    let ok = true, msg = '';
+    if (rule.required && !v) {
+      if (el.dataset.touched === '1' || force) { ok = false; msg = T('err_required'); }
+    } else if (v && rule.pattern && !rule.pattern.test(v)) {
+      ok = false; msg = T(rule.msgKey);
+    } else if (v && rule.custom && !rule.custom(v)) {
+      ok = false; msg = T(rule.msgKey);
+    }
+    el.classList.toggle('err-field', !ok);
+    const errEl = el.parentElement.querySelector('.err');
+    if (errEl) { errEl.textContent = ok ? '' : msg; errEl.style.display = ok ? 'none' : 'block'; }
+    return ok;
+  }
+  function bind(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const rule = RULES[id];
+    const sync = () => { state[FIELD_OBJ[id]][FIELD_KEYS[id]] = el.value; };
+    el.addEventListener('input', () => { sync(); if (rule && el.dataset.touched) checkField(el, rule); });
+    el.addEventListener('change', () => { sync(); if (rule && el.dataset.touched) checkField(el, rule); });
+    el.addEventListener('blur', () => { el.dataset.touched = '1'; if (rule) checkField(el, rule); });
+  }
+  Object.keys(FIELD_KEYS).forEach(bind);
+  // Conditional "Other" fields: reveal only when the value/selection is "Other"
+  const dTypeSel = document.getElementById('d-type');
+  const dOtherWrap = document.getElementById('d-other-type-wrap');
+  const dAreaWrap = document.getElementById('d-other-area-wrap');
+  const syncOther = () => {
+    const showType = dTypeSel && dTypeSel.value === 'Other';
+    const showArea = state.damage.areas.includes('Other');
+    if (dOtherWrap) dOtherWrap.hidden = !showType;
+    if (dAreaWrap) dAreaWrap.hidden = !showArea;
+  };
+  if (dTypeSel) dTypeSel.addEventListener('change', syncOther);
+  syncOther();
+
+  // ================= CASUALTIES =================
+  function renderCasualties() {
+    const wrap = document.getElementById('casualties');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    state.casualties.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'person';
+      card.dataset.cas = p.id;
+      const genderChips = ['Male','Female','Other'].map(g =>
+        `<button class="chip${p.gender === g ? ' on' : ''}" data-v="${g}">${T('g_' + g.toLowerCase())}</button>`).join('');
+      const statusBtns = ['Alive','Missing','Not Alive'].map(s => {
+        const on = p.status === s ? ' class="on' + (s === 'Not Alive' ? ' red' : '') + '"' : '';
+        const key = 'st_' + (s === 'Not Alive' ? 'notalive' : s.toLowerCase());
+        return `<button data-v="${s}"${on}>${T(key)}</button>`;
+      }).join('');
+      card.innerHTML =
+        `<div class="phead"><h4>${T('r_person')} ${i + 1}</h4>` +
+        (state.casualties.length > 1 ? `<button class="remove" data-rm="${p.id}">${T('c_remove')}</button>` : '') +
+        `</div>
+        <div class="field"><label>${T('c_name')} <span class="req">*</span></label>
+          <input type="text" placeholder="${T('c_name_ph')}" data-cas-input="name" value="${esc(p.name)}">
+          <p class="err" style="display:none"></p></div>
+        <div class="field"><label>${T('c_age')} <span class="req">*</span></label>
+          <input type="tel" inputmode="numeric" maxlength="3" placeholder="${T('c_age_ph')}" data-cas-input="age" value="${esc(p.age)}">
+          <p class="err" style="display:none"></p></div>
+        <div class="field"><label>${T('c_gender')} <span class="req">*</span></label>
+          <div class="chips" data-cas-gender>${genderChips}</div>
+          <p class="err" style="display:none"></p></div>
+        <div class="field"><label>${T('c_status')} <span class="req">*</span></label>
+          <div class="seg" data-cas-status>${statusBtns}</div>
+          <p class="err" style="display:none"></p></div>
+        <div class="field"><label>${T('c_loc')} <span class="req">*</span></label>
+          <input type="text" placeholder="${T('c_loc_ph')}" data-cas-input="location" value="${esc(p.location)}">
+          <p class="err" style="display:none"></p></div>`;
+      wrap.appendChild(card);
+    });
+  }
+
+  // ================= PHOTOS =================
+  function renderPhotos() {
+    const wrap = document.getElementById('photo-grid');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    state.damage.photos.forEach(ph => {
+      const t = document.createElement('div');
+      t.className = 'thumb';
+      t.innerHTML = `<img src="${ph.src}" alt=""><button class="rm" data-pid="${ph.id}" type="button" aria-label="Remove photo">✕</button>`;
+      wrap.appendChild(t);
+    });
+    const n = state.damage.photos.length;
+    const lbl = n === 0 ? T('photo_none') : (n === 1 ? T('photo_one') : T('photo_many').replace('{n}', n));
+    document.getElementById('photo-count').textContent = lbl + ' · ' + T('photo_opt');
+  }
+  function addSamplePhotos() {
+    const mk = (c1, c2, lbl) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><rect width='128' height='128' fill='${c1}'/>` +
+      `<rect x='12' y='80' width='104' height='26' rx='6' fill='${c2}'/><rect x='30' y='14' width='40' height='28' rx='6' fill='${c2}'/>` +
+      `<rect x='76' y='14' width='26' height='42' rx='6' fill='${c2}'/><text x='64' y='118' font-size='13' fill='#fff' text-anchor='middle' font-family='sans-serif'>${lbl}</text></svg>`);
+    const samples = [mk('#93C5FD','#60A5FA','House'), mk('#A7F3D0','#34D399','Land'), mk('#FDE68A','#F59E0B','Road')];
+    while (state.damage.photos.length < 6 && samples.length) {
+      state.damage.photos.push({ id: 's' + Math.random().toString(36).slice(2, 8), src: samples.shift() });
+    }
+    renderPhotos();
+  }
+  const photoInput = document.getElementById('d-photos');
+  if (photoInput) photoInput.addEventListener('change', (e) => {
+    [...e.target.files].forEach(f => {
+      if (state.damage.photos.length >= 6) return;
+      state.damage.photos.push({ id: 'p' + Date.now() + Math.random().toString(36).slice(2, 6), src: URL.createObjectURL(f) });
+    });
+    e.target.value = '';
+    renderPhotos();
+  });
+
+  // ================= REVIEW =================
+  const GO = { personal:1, location:2, damage:3, casualties:4, camp:5 };
+  function sec(title, secKey, rows) {
+    const card = document.createElement('div');
+    card.className = 'review-card card';
+    card.dataset.sec = secKey;
+    card.innerHTML = `<div class="sect-head"><h3>${title}<span class="incomplete-tag" hidden>${T('r_incomplete')}</span></h3>` +
+      `<button class="edit" data-go="${GO[secKey]}">${T('r_edit')}</button></div>` +
+      rows.map(r => `<div class="rv-row"><span class="k">${r.k}</span>` +
+      `<span class="v${r.empty ? ' muted' : ''}">${r.v}</span></div>`).join('');
+    return card;
+  }
+  function renderReview() {
+    const wrap = document.getElementById('review-cards');
+    if (!wrap) return;
+    const s = state;
+    const cards = [];
+    cards.push(sec(T('r_personal'), 'personal', [
+      { k: T('r_name'), v: esc(s.personal.name) || '—', empty: !s.personal.name },
+      { k: T('r_father'), v: esc(s.personal.father) || '—', empty: !s.personal.father },
+      { k: T('r_mobile'), v: esc(s.personal.mobile) || '—', empty: !s.personal.mobile },
+      { k: T('r_aadhaar'), v: s.personal.aadhaar ? 'XXXX-XXXX-' + s.personal.aadhaar.slice(-4) : '—', empty: !s.personal.aadhaar },
+      { k: T('r_family'), v: esc(s.personal.familyId) || '—', empty: !s.personal.familyId }
+    ]));
+    cards.push(sec(T('r_location'), 'location', [
+      { k: T('r_village'), v: esc(s.location.village) || '—', empty: !s.location.village },
+      { k: T('r_district'), v: esc(s.location.district) || '—', empty: !s.location.district },
+      { k: T('r_po'), v: esc(s.location.postOffice) || '—', empty: !s.location.postOffice },
+      { k: T('r_ps'), v: esc(s.location.policeStation) || '—', empty: !s.location.policeStation },
+      { k: T('r_pin'), v: esc(s.location.pin) || '—', empty: !s.location.pin }
+    ]));
+    const d = s.damage;
+    cards.push(sec(T('r_damage'), 'damage', [
+      { k: T('r_disaster'), v: d.disasterType ? TR(d.disasterType) : '—', empty: !d.disasterType },
+      { k: T('r_date'), v: d.date ? fmtDate(d.date) : '—', empty: !d.date },
+      { k: T('r_area'), v: d.areas.length ? d.areas.map(TR).join(', ') : '—', empty: !d.areas.length },
+      { k: T('r_desc'), v: esc(d.description) || '—', empty: !d.description },
+      { k: T('r_photos'), v: d.photos.length ? d.photos.length + (d.photos.length === 1 ? ' photo' : ' photos') : '—', empty: !d.photos.length }
+    ]));
+    const cas = state.casualties;
+    const filled = cas.filter(p => p.name || p.status || p.age || p.gender || p.location);
+    const casRows = [{ k: T('r_people'), v: filled.length ? filled.length + (filled.length === 1 ? ' person' : ' persons') : '—', empty: !filled.length }];
+    cas.forEach((p, i) => {
+      const bits = [p.name, p.age, TR(p.gender), TR(p.status), p.location].filter(Boolean).join(' · ');
+      casRows.push({ k: T('r_person') + ' ' + (i + 1), v: bits || '—', empty: !(p.name || p.status) });
+    });
+    cards.push(sec(T('r_casualty'), 'casualties', casRows));
+    const campRows = s.camp.inCamp === true
+      ? [{ k: T('r_campname'), v: esc(s.camp.name) || '—', empty: !s.camp.name },
+         { k: T('r_camploc'), v: esc(s.camp.location) || '—', empty: !s.camp.location },
+         { k: T('r_addr'), v: esc(s.camp.address) || '—', empty: !s.camp.address },
+         { k: T('r_land'), v: esc(s.camp.landmark) || '—', empty: !s.camp.landmark }]
+      : [{ k: T('r_camp'), v: s.camp.inCamp === false ? TR('No') : '—', empty: s.camp.inCamp !== false }];
+    cards.push(sec(T('r_camp'), 'camp', campRows));
+    wrap.replaceChildren(...cards);
+    const banner = document.getElementById('save-banner');
+    if (banner) banner.hidden = true;
+    applyReviewTags();
+  }
+
+  // ================= STATUS / SAVE / RESET =================
+  function validName(v) { return v.length > 0 && NAME_RX.test(v); }
+  function validAge(v) { return /^\d{1,3}$/.test(v) && Number(v) >= 0 && Number(v) <= 120; }
+  function validCasPerson(x) {
+    return validName(x.name) && validAge(x.age) && !!x.gender && !!x.status && String(x.location || '').trim().length > 0;
+  }
+  function sectionStatus() {
+    const p = state.personal, l = state.location, d = state.damage, c = state.camp;
+    const personal = validName(p.name) && validName(p.father) && /^[6-9]\d{9}$/.test(p.mobile) && /^\d{12}$/.test(p.aadhaar);
+    const location = !!l.village && !!l.district && !!l.postOffice && !!l.policeStation && /^\d{6}$/.test(l.pin);
+    const otherTypeOk = d.disasterType !== 'Other' || String(d.otherType || '').trim().length > 0;
+    const otherAreaOk = !d.areas.includes('Other') || String(d.otherArea || '').trim().length > 0;
+    const damage = !!d.disasterType && !!d.date && new Date(d.date) <= new Date() && d.areas.length > 0 && otherTypeOk && otherAreaOk;
+    const casualties = state.casualties.length > 0 && state.casualties.every(validCasPerson);
+    const camp = c.inCamp === false || (c.inCamp === true && !!c.name && !!c.location);
+    return { personal, location, damage, casualties, camp };
+  }
+  function collectErrors() {
+    const errs = { personal: [], location: [], damage: [], casualties: [], camp: [] };
+    const p = state.personal;
+    if (!p.name) errs.personal.push(T('err_required') + ' — ' + T('f_name'));
+    else if (!validName(p.name)) errs.personal.push(T('err_name'));
+    if (!p.father) errs.personal.push(T('err_required') + ' — ' + T('f_father'));
+    else if (!validName(p.father)) errs.personal.push(T('err_name'));
+    if (!/^[6-9]\d{9}$/.test(p.mobile)) errs.personal.push(T('err_mobile'));
+    if (!/^\d{12}$/.test(p.aadhaar)) errs.personal.push(T('err_aadhaar'));
+    const l = state.location;
+    if (!l.village) errs.location.push(T('err_required') + ' — ' + T('f_village'));
+    if (!l.district) errs.location.push(T('err_required') + ' — ' + T('f_district'));
+    if (!l.postOffice) errs.location.push(T('err_required') + ' — ' + T('f_po'));
+    if (!l.policeStation) errs.location.push(T('err_required') + ' — ' + T('f_ps'));
+    if (!/^\d{6}$/.test(l.pin)) errs.location.push(T('err_pin'));
+    const d = state.damage;
+    if (!d.disasterType) errs.damage.push(T('err_required') + ' — ' + T('f_dtype'));
+    if (d.disasterType === 'Other' && !String(d.otherType || '').trim()) errs.damage.push(T('f_dother'));
+    if (!d.date) errs.damage.push(T('err_required') + ' — ' + T('f_ddate'));
+    else if (new Date(d.date) > new Date()) errs.damage.push(T('err_future'));
+    if (!d.areas.length) errs.damage.push(T('err_required') + ' — ' + T('f_darea'));
+    if (d.areas.includes('Other') && !String(d.otherArea || '').trim()) errs.damage.push(T('f_dother') + ' (area)');
+    if (!sectionStatus().casualties) errs.casualties.push(T('err_cas'));
+    const c = state.camp;
+    if (c.inCamp === null) errs.camp.push(T('camp_q'));
+    else if (c.inCamp === true && (!c.name || !c.location)) errs.camp.push(T('err_camp'));
+    return errs;
+  }
+  function applyReviewTags() {
+    const st = sectionStatus();
+    document.querySelectorAll('.review-card').forEach(card => {
+      const done = st[card.dataset.sec];
+      card.classList.toggle('incomplete', !done);
+      const tag = card.querySelector('.incomplete-tag');
+      if (tag) tag.hidden = done;
+    });
+  }
+  function saveSurvey() {
+    const errs = collectErrors();
+    const flat = [];
+    for (const k in errs) errs[k].forEach(m => flat.push(m));
+    const banner = document.getElementById('save-banner');
+    for (const id in RULES) checkField(document.getElementById(id), RULES[id], true);
+    if (flat.length) {
+      if (banner) {
+        banner.hidden = false;
+        document.getElementById('save-errors').innerHTML = flat.map(m => `<li>${esc(m)}</li>`).join('');
+      }
+      applyReviewTags();
+      return;
+    }
+    if (banner) banner.hidden = true;
+    const id = 'SC-2026-' + String(Math.floor(100000 + Math.random() * 900000));
+    const rec = { id, at: Date.now(), name: state.personal.name, mobile: state.personal.mobile, village: state.location.village };
+    savedStore.unshift(rec);
+    persistSaved();
+    renderSavedList();
+    const idEl = document.getElementById('survey-id');
+    if (idEl) idEl.textContent = id;
+    go(7);
+  }
+
+  // ================= SAVED LIST / RESET =================
+  let savedStore = [];
+  try { savedStore = JSON.parse(localStorage.getItem('setu_saved') || '[]'); } catch (e) {}
+  function persistSaved() { try { localStorage.setItem('setu_saved', JSON.stringify(savedStore)); } catch (e) {} }
+  function renderSavedList() { return;
+    if (!savedStore.length) {
+      box.innerHTML = '<p style="font-size:13px;color:var(--text-3);padding:6px 2px">' + T('saved_none') + '</p>';
+      return;
+    }
+    savedStore.slice(0, 5).forEach(it => {
+      const el = document.createElement('div');
+      el.className = 'saved-item';
+      const d = new Date(it.at);
+      el.innerHTML = `<div><b>${esc(it.id)}</b><span class="meta">${esc(it.name)} · ${d.toLocaleDateString()}</span></div>` +
+        `<span class="pill pill-green"><span class="dot"></span>${T('saved')}</span>`;
+      box.appendChild(el);
+    });
+  }
+  function resetSurvey() {
+    Object.assign(state, {
+      personal: { name:'', father:'', mobile:'', aadhaar:'', familyId:'' },
+      location: { village:'', district:'', postOffice:'', policeStation:'', pin:'' },
+      damage:   { disasterType:'', otherType:'', date:'', areas:[], otherArea:'', description:'', photos:[] },
+      casualties: [ { id: ++casSeq, name:'', age:'', gender:'', status:'', location:'' } ],
+      camp:     { inCamp:null, name:'', location:'', address:'', landmark:'' }
+    });
+    document.querySelectorAll('.err-field').forEach(el => el.classList.remove('err-field'));
+    document.querySelectorAll('.err').forEach(el => { el.style.display = 'none'; });
+    document.querySelectorAll('.seg button.on, .chip.on').forEach(el => el.classList.remove('on', 'red'));
+    for (const id in FIELD_KEYS) { const el = document.getElementById(id); if (el) { el.value = ''; el.dataset.touched = ''; } }
+    const campCard = document.getElementById('camp-card');
+    if (campCard) campCard.hidden = true;
+    const banner = document.getElementById('save-banner');
+    if (banner) banner.hidden = true;
+    syncOther();
+    renderCasualties();
+    renderPhotos();
+    renderSavedList();
+  }
+
+  // ================= EXTRA DICTIONARY KEYS =================
+
+  // ================= INTERACTIONS =================
+  document.addEventListener('click', (e) => {
+    const goEl = e.target.closest('[data-go]');
+    if (goEl) { go(parseInt(goEl.dataset.go, 10)); return; }
+    const rm = e.target.closest('[data-rm]');
+    if (rm) {
+      state.casualties = state.casualties.filter(p => p.id !== Number(rm.dataset.rm));
+      if (!state.casualties.length) state.casualties = [{ id: ++casSeq, name:'', age:'', gender:'', status:'', location:'' }];
+      renderCasualties();
+      return;
+    }
+    if (e.target.closest('#add-person')) {
+      state.casualties.push({ id: ++casSeq, name:'', age:'', gender:'', status:'', location:'' });
+      renderCasualties();
+      return;
+    }
+    const gc = e.target.closest('[data-cas-gender] .chip');
+    if (gc) {
+      const card = gc.closest('.person');
+      const p = state.casualties.find(x => x.id === Number(card.dataset.cas));
+      card.querySelectorAll('[data-cas-gender] .chip').forEach(c => c.classList.remove('on'));
+      gc.classList.add('on');
+      p.gender = gc.dataset.v;
+      return;
+    }
+    const sb = e.target.closest('[data-cas-status] button');
+    if (sb) {
+      const card = sb.closest('.person');
+      const p = state.casualties.find(x => x.id === Number(card.dataset.cas));
+      card.querySelectorAll('[data-cas-status] button').forEach(b => b.classList.remove('on', 'red'));
+      sb.classList.add('on');
+      if (sb.dataset.v === 'Not Alive') sb.classList.add('red');
+      p.status = sb.dataset.v;
+      return;
+    }
+    const da = e.target.closest('#d-areas .chip');
+    if (da) {
+      da.classList.toggle('on');
+      state.damage.areas = [...document.querySelectorAll('#d-areas .chip.on')].map(c => c.dataset.v);
+      syncOther();
+      return;
+    }
+    if (e.target.closest('#add-photo-btn')) { document.getElementById('d-photos').click(); return; }
+    if (e.target.closest('#sample-photos')) { addSamplePhotos(); return; }
+    const rp = e.target.closest('.thumb .rm');
+    if (rp) {
+      state.damage.photos = state.damage.photos.filter(p => p.id !== rp.dataset.pid);
+      renderPhotos();
+      return;
+    }
+    const cb = e.target.closest('#camp-seg button');
+    if (cb) {
+      const yes = cb.dataset.v === 'yes';
+      state.camp.inCamp = yes;
+      document.getElementById('camp-card').hidden = !yes;
+      document.querySelectorAll('#camp-seg button').forEach(b => b.classList.remove('on'));
+      cb.classList.add('on');
+      return;
+    }
+  });
+  const casRules = {
+    name:     { test: (v) => v.length > 0 && NAME_RX.test(v), msgKey: 'err_name' },
+    age:      { test: (v) => /^\d{1,3}$/.test(v) && Number(v) >= 0 && Number(v) <= 120, msgKey: 'err_age' },
+    location: { test: (v) => v.length > 0, msgKey: 'err_required' }
+  };
+  function checkCasField(inp) {
+    const rule = casRules[inp.dataset.casInput];
+    if (!rule) return;
+    const ok = rule.test(inp.value.trim());
+    inp.classList.toggle('err-field', !ok);
+    const errEl = inp.parentElement.querySelector('.err');
+    if (errEl) { errEl.textContent = ok ? '' : T(rule.msgKey); errEl.style.display = ok ? 'none' : 'block'; }
+    return ok;
+  }
+  document.addEventListener('input', (e) => {
+    const inp = e.target.closest('[data-cas-input]');
+    if (!inp) return;
+    const card = inp.closest('.person');
+    const p = state.casualties.find(x => x.id === Number(card.dataset.cas));
+    if (p) p[inp.dataset.casInput] = inp.value;
+    if (inp.dataset.touched === '1') checkCasField(inp);
+  });
+  document.addEventListener('blur', (e) => {
+    const inp = e.target.closest('[data-cas-input]');
+    if (!inp) return;
+    inp.dataset.touched = '1';
+    checkCasField(inp);
+  }, true);
+  const prevBtn = document.querySelector('.prev');
+  const nextBtn = document.querySelector('.next');
+  if (prevBtn) prevBtn.addEventListener('click', () => go(cur - 1));
+  if (nextBtn) nextBtn.addEventListener('click', () => go(cur + 1));
+  const saveBtn = document.getElementById('save-btn');
+  if (saveBtn) saveBtn.addEventListener('click', saveSurvey);
+  const viewSaved = document.getElementById('view-saved');
+  if (viewSaved) viewSaved.addEventListener('click', () => {
+    const card = document.getElementById('saved-list-card');
+    card.hidden = !card.hidden;
+    if (!card.hidden) renderSavedList();
+  });
+  const newSurvey = document.getElementById('new-survey');
+  if (newSurvey) newSurvey.addEventListener('click', () => { resetSurvey(); go(0); });
+
+  // ================= TOAST (Save Draft feedback) =================
+  let toastTimer = null;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+  document.querySelectorAll('.draft-btn').forEach(b => {
+    b.addEventListener('click', () => toast(T('toast_draft')));
+  });
+
+  // ================= INIT =================
+  applyLang();
+  renderCasualties();
+  renderPhotos();
+  renderSavedList();
+  go(0);
+  </script></script>
+  </div>
+  </body>
+  </html>
