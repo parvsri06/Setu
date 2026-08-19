@@ -1,6 +1,20 @@
-fastapi
-uvicorn[standard]
-pydantic
-sqlalchemy
-psycopg2-binary
-geoalchemy2
+# Relief Registry backend — FastAPI + PostgreSQL stack
+# This file is the Python equivalent of what build.gradle.kts was:
+# add a dependency here, then `pip install -r requirements.txt`.
+
+# Web framework
+fastapi>=0.115
+uvicorn[standard]>=0.30
+
+# Database
+sqlalchemy>=2.0
+alembic>=1.13
+psycopg[binary]>=3.2
+
+# Auth / security (Design A: Ed25519 signing, Design B: JWT)
+pyjwt>=2.9
+cryptography>=43
+
+# Testing
+pytest>=8
+httpx>=0.27
